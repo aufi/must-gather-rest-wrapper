@@ -13,3 +13,6 @@ bin
 *~
 *.swp
 *.retry
+
+cover.out
+*.db

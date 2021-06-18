@@ -21,4 +21,8 @@ Must-gather request status
 ## Open questions
 
 Sqlite backend or just in memory? (after container restart there will be no archives anyway so no need for persistent db)
-In memory and communicate via chans
+-> In memory (or use sqlite just with path flag inmemory) and communicate via chans
+
+Authentication Wrapper <-> User from UI: not sure ?
+
+Authentication Wrapper <-> OCP: need admin service account/token to execute must-gather (to be provided by operator)

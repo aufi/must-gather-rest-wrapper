@@ -3,7 +3,7 @@ FROM registry.access.redhat.com/ubi8/go-toolset:1.14.12 as builder
 ENV GOPATH=$APP_ROOT
 RUN env
 COPY . .
-RUN CGO_ENABLED=1 go build -o app github.com/aufi/must-gather-rest-wrapper
+RUN go build -o app github.com/aufi/must-gather-rest-wrapper/pkg
 
 
 # Runner image
@@ -23,8 +23,8 @@ FROM registry.access.redhat.com/ubi8-minimal
 #      io.openshift.expose-services="" \
 #      io.openshift.tags="operator,konveyor,forklift"
 
-COPY --from=builder /opt/app-root/src/app /usr/local/bin/app
+COPY --from=builder /opt/app-root/src/app /usr/bin/must-gather-rest-wrapper
 
-RUN microdnf -y install tar && microdnf clean all
+# RUN microdnf -y install tar && microdnf clean all
 
-ENTRYPOINT ["/usr/local/bin/app"]
+ENTRYPOINT ["/usr/bin/must-gather-rest-wrapper"]

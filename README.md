@@ -13,8 +13,9 @@ Checkout ```doc/``` directory for more information.
 - <del>prepare HTTP endpoints in gin-gonic</del>
 - <del>prepare database/storage for gatherings metadata</del>
 - <del>prepare image build scripts</del>
-- implement create / get / list gatherings (into db)
-- implement single must-gather execution based on gathering db record
+- <del>implement create / get / list gatherings (into db)</del>
+- <del>implement raw single must-gather execution based on gathering db record</del>
+- implement all needed oc adm must-gather options support
 - handle async/not-blocking gathering with sane limits (e.g. max 10 simul.gatherings)
 - prepare serving of gathered archive
 - add ocp auth for gin-gonic if needed

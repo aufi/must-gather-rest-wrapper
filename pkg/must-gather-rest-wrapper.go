@@ -29,13 +29,12 @@ func main() {
 func triggerGathering(c *gin.Context) {
 	var gathering backend.Gathering
 	if err := c.Bind(&gathering); err == nil {
-		// Bind() needs some additional setup in model
 		gathering.Status = "new"
-		log.Printf("%v", gathering)
 		db.Create(&gathering)
+		c.JSON(201, "gathering created")
+		go backend.MustGatherExec(&gathering, db)
 	} else {
-		log.Printf("%v", gathering)
-		log.Printf("%v", err)
+		log.Printf("Error creating gathering: %v", err)
 		c.JSON(400, "create gathering error")
 	}
 }

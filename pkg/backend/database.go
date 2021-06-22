@@ -7,10 +7,12 @@ import (
 
 type Gathering struct {
 	gorm.Model
-	Status        string `json:"status"` // new, inprogress, completed, error
-	Image         string `json:"image" binding:"required"`
+	Status        string `form:"status" json:"status"` // new, inprogress, completed, error
+	Image         string `form:"image" json:"image" binding:"required"`
 	CustomCommand string
-	ArchiveLink   string
+	ArchivePath   string
+	ExecOutput    string
+	//TODO: ensure the model provides all must-gather options
 }
 
 func ConnectDB(databasePath string) *gorm.DB {

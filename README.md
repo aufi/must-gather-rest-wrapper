@@ -4,7 +4,7 @@ The wraper should provide HTTP API to allow trigger OpenShift must-gather (full 
 
 Under initial development, if this will work well, it should be moved under Forklift organization
 
-Checkout ```doc/``` directory for more information.
+Checkout [doc](doc/README.md) directory for more information.
 
 ## Notes
 

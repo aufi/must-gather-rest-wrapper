@@ -31,7 +31,7 @@ func triggerGathering(c *gin.Context) {
 	if err := c.Bind(&gathering); err == nil {
 		gathering.Status = "new"
 		db.Create(&gathering)
-		c.JSON(201, "gathering created")
+		c.JSON(201, gathering)
 		go backend.MustGatherExec(&gathering, db)
 	} else {
 		log.Printf("Error creating gathering: %v", err)

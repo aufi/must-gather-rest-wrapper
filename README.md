@@ -15,8 +15,9 @@ Checkout [doc](doc/README.md) directory for more information.
 - <del>prepare image build scripts</del>
 - <del>implement create / get / list gatherings (into db)</del>
 - <del>implement raw single must-gather execution based on gathering db record</del>
-- implement all needed oc adm must-gather options support
-- handle async/not-blocking gathering with sane limits (e.g. max 10 simul.gatherings)
+- <del>implement all needed oc adm must-gather options support</del>
+- add ENV variables-driven default must-gather options values
+- if needed: handle async/not-blocking gathering with sane limits (e.g. max 10 simul.gatherings)
 - prepare serving of gathered archive
 - add ocp auth for gin-gonic if needed
 - use passed admin token from operator to exec must-gather

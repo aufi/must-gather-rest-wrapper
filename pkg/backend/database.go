@@ -7,12 +7,16 @@ import (
 
 type Gathering struct {
 	gorm.Model
-	Status        string `form:"status" json:"status"` // new, inprogress, completed, error
-	Image         string `form:"image" json:"image" binding:"required"`
-	CustomCommand string
-	ArchivePath   string
-	ExecOutput    string
-	//TODO: ensure the model provides all must-gather options
+	Status      string `form:"status" json:"status"` // new, inprogress, completed, error
+	Image       string `form:"image" json:"image"`
+	ImageStream string `form:"image-stream" json:"image-stream"`
+	NodeName    string `form:"node-name" json:"node-name"`
+	Command     string `form:"command" json:"command"`
+	SourceDir   string `form:"source-dir" json:"source-dir"`
+	Timeout     string `form:"timeout" json:"timeout"`
+	ArchivePath string
+	//ArchiveUrl    string
+	ExecOutput string
 }
 
 func ConnectDB(databasePath string) *gorm.DB {

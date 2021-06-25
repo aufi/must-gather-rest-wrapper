@@ -12,7 +12,7 @@ var r *gin.Engine
 var db *gorm.DB
 
 func main() {
-	db = backend.ConnectDB("gatherings_dev.db") //("file::memory:?cache=shared") // Ephemeral database backend until persistence would be needed
+	db = backend.ConnectDB("gatherings.db") //("file::memory:?cache=shared") // Ephemeral database backend until persistence would be needed
 	r = gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
@@ -30,6 +30,9 @@ func triggerGathering(c *gin.Context) {
 	var gathering backend.Gathering
 	if err := c.Bind(&gathering); err == nil {
 		gathering.Status = "new"
+		if gathering.Image == "" {
+			gathering.Image = "quay.io/konveyor/forklift-must-gather" // default image configurable via OS ENV vars
+		}
 		db.Create(&gathering)
 		c.JSON(201, gathering)
 		go backend.MustGatherExec(&gathering, db)

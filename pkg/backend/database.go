@@ -14,6 +14,7 @@ type Gathering struct {
 	Command     string `form:"command" json:"command"`
 	SourceDir   string `form:"source-dir" json:"source-dir"`
 	Timeout     string `form:"timeout" json:"timeout"`
+	Server      string `form:"server" json:"server"`
 	ArchivePath string
 	//ArchiveUrl    string
 	ExecOutput string

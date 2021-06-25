@@ -44,6 +44,9 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB) {
 	if gathering.Timeout != "" {
 		args = append(args, "--timeout", gathering.Timeout)
 	}
+	if gathering.Server != "" {
+		args = append(args, "--server", gathering.Server)
+	}
 	if gathering.Command != "" {
 		args = append(args, "--", gathering.Command)
 	}

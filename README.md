@@ -22,4 +22,5 @@ Checkout [doc](doc/README.md) directory for more information.
 - add ocp auth for gin-gonic if needed
 - use passed admin token from operator to exec must-gather
 - basic tests
+- document API usage
 - probably: configurable port&db_path&archive storage

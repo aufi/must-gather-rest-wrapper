@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -25,7 +26,7 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB) {
 	cmd := exec.Command("oc")
 
 	// Minimal set of args
-	args := []string{"<oc placeholder>", "adm", "must-gather", "--dest-dir", dest_directory}
+	args := []string{"oc", "adm", "must-gather", "--dest-dir", dest_directory}
 
 	// Expand args for given options (a shared function would need use reflection or marshaling which didn't look to be reasonable to me)
 	// ? args sanitized to not concat commands like image="quay.io/foo/bar; rm -rf something"
@@ -68,7 +69,7 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB) {
 		log.Printf("Error finding must-gather result archive: %v", err)
 		gathering.Status = "error"
 	} else {
-		gathering.ArchivePath = fmt.Sprintf("%s", gatheredArchivePath)
+		gathering.ArchivePath = strings.TrimSuffix(fmt.Sprintf("%s", gatheredArchivePath), "\n")
 	}
 
 	// Store console output and archive

@@ -22,6 +22,9 @@ func main() {
 	r.POST("/must-gather", triggerGathering)
 	r.GET("/must-gather", listGatherings) // good at least during development and testing, real user should know gathering ID
 	r.GET("/must-gather/:id", getGathering)
+	r.GET("/must-gather/:id/data", getGatheringArchive)
+
+	// and regulary delete old records&archives?
 
 	r.Run(":8080")
 }
@@ -55,5 +58,15 @@ func getGathering(c *gin.Context) {
 		c.JSON(200, gathering)
 	} else {
 		c.JSON(404, "not found")
+	}
+}
+
+func getGatheringArchive(c *gin.Context) {
+	var gathering backend.Gathering
+	db.First(&gathering, "id = ?", c.Param("id"))
+	if gathering.ID != 0 && gathering.Status == "completed" {
+		c.FileAttachment(gathering.ArchivePath, "must-gather.tar.gz") // or name from the result - its basename
+	} else {
+		c.String(404, "not found")
 	}
 }

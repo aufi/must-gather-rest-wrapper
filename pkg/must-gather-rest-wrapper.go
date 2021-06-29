@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"path"
 
 	"github.com/aufi/must-gather-rest-wrapper/pkg/backend"
 	"github.com/gin-gonic/gin"
@@ -65,7 +66,7 @@ func getGatheringArchive(c *gin.Context) {
 	var gathering backend.Gathering
 	db.First(&gathering, "id = ?", c.Param("id"))
 	if gathering.ID != 0 && gathering.Status == "completed" {
-		c.FileAttachment(gathering.ArchivePath, "must-gather.tar.gz") // or name from the result - its basename
+		c.FileAttachment(gathering.ArchivePath, path.Base(gathering.ArchivePath))
 	} else {
 		c.String(404, "not found")
 	}

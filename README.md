@@ -18,7 +18,8 @@ Checkout [doc](doc/README.md) directory for more information.
 - <del>implement all needed oc adm must-gather options support</del>
 - add ENV variables-driven default must-gather options values
 - if needed: handle async/not-blocking gathering with sane limits (e.g. max 10 simul.gatherings)
-- prepare serving of gathered archive
+- <del>prepare serving of gathered archive</del>
+- add periodical obsolete data cleanup
 - add ocp auth for gin-gonic if needed
 - use passed admin token from operator to exec must-gather
 - basic tests

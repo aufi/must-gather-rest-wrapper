@@ -51,7 +51,7 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB) {
 	if gathering.Command != "" {
 		args = append(args, "--", gathering.Command)
 	}
-	log.Printf("Must-gather execution #%d args: %v", gathering.ID, args)
+	log.Printf("Must-gather execution #%d command args: %v", gathering.ID, args)
 	cmd.Args = args
 
 	// Execute the must-gather

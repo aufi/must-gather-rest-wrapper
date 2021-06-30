@@ -10,13 +10,13 @@ import (
 	"gorm.io/gorm"
 )
 
-func MustGatherExec(gathering *Gathering, db *gorm.DB) {
+func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	log.Printf("Starting Must-gather execution #%d", gathering.ID)
 	gathering.Status = "inprogress"
 	db.Save(&gathering)
 
 	// Prepare destination directory
-	dest_directory := fmt.Sprintf("/tmp/must-gather-result-%d", gathering.ID)
+	dest_directory := gatheringDir(gathering.ID)
 	err := os.Mkdir(dest_directory, 0750)
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +62,7 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB) {
 	}
 
 	// Identify archive file
-	cmd = exec.Command("find", dest_directory, "-name", "must-gather.tar.gz")
+	cmd = exec.Command("find", dest_directory, "-name", archiveFilename)
 	// Expecting a single file with name given by forklift/crane must-gather, might be needed to handle multiple files later (pack all files in dir)
 	gatheredArchivePath, err := cmd.Output()
 	if err != nil || fmt.Sprintf("%s", gatheredArchivePath) == "" {
@@ -79,4 +79,8 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB) {
 	}
 	log.Printf("Must-gather execution #%d finished with status: %s", gathering.ID, gathering.Status)
 	db.Save(&gathering)
+}
+
+func gatheringDir(gatheringID uint) string {
+	return fmt.Sprintf("/tmp/must-gather-result-%d", gatheringID)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"path"
 
 	"github.com/aufi/must-gather-rest-wrapper/pkg/backend"
@@ -13,7 +14,9 @@ var r *gin.Engine
 var db *gorm.DB
 
 func main() {
-	db = backend.ConnectDB("gatherings.db") //("file::memory:?cache=shared") // Ephemeral database backend until persistence would be needed
+	db = backend.ConnectDB(configEnvOrDefault("DB_PATH", "gatherings.db"))
+
+	// Gin routes setup
 	r = gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
@@ -25,9 +28,7 @@ func main() {
 	r.GET("/must-gather/:id", getGathering)
 	r.GET("/must-gather/:id/data", getGatheringArchive)
 
-	// and regulary delete old records&archives?
-
-	r.Run(":8080")
+	r.Run() // PORT from ENV variable is handled inside Gin-gonic and defaults to 8080
 }
 
 func triggerGathering(c *gin.Context) {
@@ -35,11 +36,14 @@ func triggerGathering(c *gin.Context) {
 	if err := c.Bind(&gathering); err == nil {
 		gathering.Status = "new"
 		if gathering.Image == "" {
-			gathering.Image = "quay.io/konveyor/forklift-must-gather" // default image configurable via OS ENV vars
+			gathering.Image = configEnvOrDefault("DEFAULT_IMAGE", "quay.io/konveyor/forklift-must-gather") // default image configurable via OS ENV vars
+		}
+		if gathering.Timeout == "" {
+			gathering.Timeout = configEnvOrDefault("TIMEOUT", "20m") // default timeout for must-gather execution
 		}
 		db.Create(&gathering)
 		c.JSON(201, gathering)
-		go backend.MustGatherExec(&gathering, db)
+		go backend.MustGatherExec(&gathering, db, configEnvOrDefault("ARCHIVE_FILENAME", "must-gather.tar.gz"))
 	} else {
 		log.Printf("Error creating gathering: %v", err)
 		c.JSON(400, "create gathering error")
@@ -69,5 +73,16 @@ func getGatheringArchive(c *gin.Context) {
 		c.FileAttachment(gathering.ArchivePath, path.Base(gathering.ArchivePath))
 	} else {
 		c.String(404, "not found")
+	}
+}
+
+func configEnvOrDefault(name, defaultValue string) string {
+	value, present := os.LookupEnv(name)
+	if present {
+		log.Printf("Config option %s set from environment variable to: %s", name, value)
+		return value
+	} else {
+		log.Printf("Environment variable %s is undefined, using default: %s", name, defaultValue)
+		return defaultValue
 	}
 }

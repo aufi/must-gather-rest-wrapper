@@ -16,7 +16,7 @@ Checkout [doc](doc/README.md) directory for more information.
 - <del>implement create / get / list gatherings (into db)</del>
 - <del>implement raw single must-gather execution based on gathering db record</del>
 - <del>implement all needed oc adm must-gather options support</del>
-- add ENV variables-driven default must-gather options values
+- <del>add ENV variables-driven default must-gather options values</del>
 - if needed: handle async/not-blocking gathering with sane limits (e.g. max 10 simul.gatherings)
 - <del>prepare serving of gathered archive</del>
 - add periodical obsolete data cleanup
@@ -24,4 +24,3 @@ Checkout [doc](doc/README.md) directory for more information.
 - use passed admin token from operator to exec must-gather
 - basic tests
 - document API usage
-- probably: configurable port&db_path&archive storage

@@ -1,7 +1,9 @@
 package backend
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"gorm.io/driver/sqlite"
@@ -35,4 +37,32 @@ func ConnectDB(databasePath string) *gorm.DB {
 		panic("Failed to migrate database")
 	}
 	return db
+}
+
+func PeriodicalCleanup(maxAgeOption string, db *gorm.DB) {
+	if maxAgeOption == "" || maxAgeOption == "-1" {
+		log.Println("Periodical must-gather executions cleanup is disabled.")
+		return
+	}
+	age, err := time.ParseDuration(maxAgeOption)
+	if err != nil {
+		log.Panic(fmt.Printf("Error parsing maxAgeOption for cleanup: %s", err))
+	}
+	log.Printf("Scheduling must-gather executions cleanup for older than %s", age)
+	for currTime := range time.Tick(1 * time.Hour) {
+		oldTime := currTime.Add(-1 * age)
+		log.Printf("Checking outdated must-gather executions")
+		var obsoleteGatherings []*Gathering
+		db.Where("updated_at < ?", oldTime).Find(&obsoleteGatherings)
+		for _, obsoleteGathering := range obsoleteGatherings {
+			log.Printf("Deleting outdated must-gather execution #%d", obsoleteGathering.ID)
+			// Remove gathering data directory
+			err := os.RemoveAll(gatheringDir(obsoleteGathering.ID))
+			if err != nil {
+				log.Printf("Error delete directory: %v", err)
+			}
+			// Remove gathering record from database
+			db.Delete(&obsoleteGathering)
+		}
+	}
 }

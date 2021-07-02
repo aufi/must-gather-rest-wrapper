@@ -16,6 +16,9 @@ var db *gorm.DB
 func main() {
 	db = backend.ConnectDB(configEnvOrDefault("DB_PATH", "gatherings.db"))
 
+	// Periodical deletion of old records&archives on background
+	go backend.PeriodicalCleanup(configEnvOrDefault("CLEANUP_MAX_AGE", "-1"), db)
+
 	// Gin routes setup
 	r = gin.Default()
 

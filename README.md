@@ -87,7 +87,7 @@ DB_PATH | ./gatherings.db | Local storage for must-gather executions records, ca
 DEFAULT_IMAGE | quay.io/konveyor/forklift-must-gather | Image name to be used if it was not specified in API call
 TIMEOUT | 20m | Timeout for must-gather execution
 ARCHIVE_FILENAME | must-gather.tar.gz | Archive filename to be searched in must-gather execution directory to be provided to user as the result archive
-CLEANUP_MAX_AGE_HOURS | -1 | Maximum age (in hours) of must-gather executions kept available in the wrapper, -1 disables the deletion
+CLEANUP_MAX_AGE | -1 | Maximum age of must-gather executions kept available in the wrapper, -1 disables the deletion, e.g. 24h
 
 ## Notes
 

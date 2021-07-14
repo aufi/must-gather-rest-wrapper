@@ -39,7 +39,7 @@ func ConnectDB(databasePath string) *gorm.DB {
 	return db
 }
 
-func PeriodicalCleanup(maxAgeOption string, db *gorm.DB) {
+func PeriodicalCleanup(maxAgeOption string, db *gorm.DB, runOnceNow bool) {
 	if maxAgeOption == "" || maxAgeOption == "-1" {
 		log.Println("Periodical must-gather executions cleanup is disabled.")
 		return
@@ -49,7 +49,11 @@ func PeriodicalCleanup(maxAgeOption string, db *gorm.DB) {
 		log.Panic(fmt.Printf("Error parsing maxAgeOption for cleanup: %s", err))
 	}
 	log.Printf("Scheduling must-gather executions cleanup for older than %s", age)
-	for currTime := range time.Tick(1 * time.Hour) {
+	tickerPeriod := 1 * time.Hour
+	if runOnceNow == true {
+		tickerPeriod = 1 * time.Millisecond
+	}
+	for currTime := range time.Tick(tickerPeriod) {
 		oldTime := currTime.Add(-1 * age)
 		log.Printf("Checking outdated must-gather executions")
 		var obsoleteGatherings []*Gathering
@@ -63,6 +67,9 @@ func PeriodicalCleanup(maxAgeOption string, db *gorm.DB) {
 			}
 			// Remove gathering record from database
 			db.Delete(&obsoleteGathering)
+		}
+		if runOnceNow == true {
+			break
 		}
 	}
 }

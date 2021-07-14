@@ -17,8 +17,14 @@ func main() {
 	db = backend.ConnectDB(configEnvOrDefault("DB_PATH", "gatherings.db"))
 
 	// Periodical deletion of old records&archives on background
-	go backend.PeriodicalCleanup(configEnvOrDefault("CLEANUP_MAX_AGE", "-1"), db)
+	go backend.PeriodicalCleanup(configEnvOrDefault("CLEANUP_MAX_AGE", "-1"), db, false)
 
+	// Start HTTP service
+	r := setupRouter()
+	r.Run() // PORT from ENV variable is handled inside Gin-gonic and defaults to 8080
+}
+
+func setupRouter() *gin.Engine {
 	// Gin routes setup
 	r = gin.Default()
 
@@ -31,7 +37,7 @@ func main() {
 	r.GET("/must-gather/:id", getGathering)
 	r.GET("/must-gather/:id/data", getGatheringArchive)
 
-	r.Run() // PORT from ENV variable is handled inside Gin-gonic and defaults to 8080
+	return r
 }
 
 func triggerGathering(c *gin.Context) {

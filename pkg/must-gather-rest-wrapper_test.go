@@ -16,6 +16,7 @@ var router *gin.Engine
 func init() {
 	db = backend.ConnectDB("file::memory:?cache=shared")
 	router = setupRouter()
+	os.RemoveAll("/tmp/must-gather-result-1") // Ensure empty destinationDir
 }
 
 func TestTriggerGathering(t *testing.T) {

@@ -102,10 +102,10 @@ Checkout [doc](doc/README.md) directory for more information.
 - <del>implement raw single must-gather execution based on gathering db record</del>
 - <del>implement all needed oc adm must-gather options support</del>
 - <del>add ENV variables-driven default must-gather options values</del>
-- if needed: handle async/not-blocking gathering with sane limits (e.g. max 10 simul.gatherings)
+- <del>not needed now: handle async/not-blocking gathering with sane limits (e.g. max 10 simul.gatherings)</del>
 - <del>prepare serving of gathered archive</del>
 - <del>add periodical obsolete data cleanup</del>
 - add ocp auth for gin-gonic if needed
 - use passed admin token from operator to exec must-gather (from operator)
-- basic tests
+- <del>basic tests</del>
 - <del>document API usage</del>

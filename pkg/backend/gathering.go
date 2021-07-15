@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var cmdExecCombinedOutput = cmdRealCombinedOutput
+
 func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	log.Printf("Starting Must-gather execution #%d", gathering.ID)
 	gathering.Status = "inprogress"
@@ -55,7 +57,7 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	cmd.Args = args
 
 	// Execute the must-gather
-	output, err := cmd.CombinedOutput()
+	output, err := cmdExecCombinedOutput(cmd) // cmd.CombinedOutput is wrapped in a method for better testing
 	if err != nil {
 		log.Printf("Error executing oc adm must-gather command: %v", err)
 		gathering.Status = "error"
@@ -79,6 +81,10 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	}
 	log.Printf("Must-gather execution #%d finished with status: %s", gathering.ID, gathering.Status)
 	db.Save(&gathering)
+}
+
+func cmdRealCombinedOutput(cmd *exec.Cmd) ([]byte, error) {
+	return cmd.CombinedOutput()
 }
 
 func gatheringDir(gatheringID uint) string {

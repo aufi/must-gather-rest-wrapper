@@ -1,7 +1,9 @@
 package backend
 
 import (
+	"log"
 	"os"
+	"os/exec"
 	"testing"
 )
 
@@ -13,6 +15,10 @@ func TestMustGatherExec(t *testing.T) {
 	gathering.Image = "foo.bar/image"
 	gathering.Timeout = "11m"
 	db.Create(&gathering)
+
+	// Ensure empty destinationDir and mock command exec
+	os.RemoveAll("/tmp/must-gather-result-1")
+	cmdExecCombinedOutput = cmdMockCombinedOutput
 
 	// Exec the gathering
 	MustGatherExec(&gathering, db, "must-gather.tar.gz")
@@ -30,4 +36,10 @@ func TestMustGatherExec(t *testing.T) {
 	if _, err := os.Stat(gathering.ArchivePath); err != nil {
 		t.Errorf("Archive file is missing, looked for: %s", gathering.ArchivePath)
 	}
+}
+
+func cmdMockCombinedOutput(_ *exec.Cmd) ([]byte, error) {
+	log.Println("Running mocked exec")
+	os.Create("/tmp/must-gather-result-1/must-gather.tar.gz")
+	return []byte("mocked cmd execution"), nil
 }

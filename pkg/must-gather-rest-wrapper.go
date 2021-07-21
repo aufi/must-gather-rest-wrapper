@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"path"
 
 	"github.com/aufi/must-gather-rest-wrapper/pkg/backend"
 	"github.com/gin-gonic/gin"
@@ -67,11 +66,16 @@ func listGatherings(c *gin.Context) {
 
 func getGathering(c *gin.Context) {
 	var gathering backend.Gathering
-	db.First(&gathering, "id = ?", c.Param("id")) // safe way to handle possible string input to not interpret it as a query
+	db.First(&gathering, "id = ?", c.Param("id")) // ID (uint) lookup - safe way to handle possible string input to not interpret it as a query
 	if gathering.ID != 0 {
 		c.JSON(200, gathering)
 	} else {
-		c.JSON(404, "not found")
+		db.Last(&gathering, "custom_name = ?", c.Param("id")) // Fallback to CustomName (string) lookup - based on custom name provided by client
+		if gathering.ID != 0 {
+			c.JSON(200, gathering)
+		} else {
+			c.JSON(404, "not found")
+		}
 	}
 }
 
@@ -79,7 +83,7 @@ func getGatheringArchive(c *gin.Context) {
 	var gathering backend.Gathering
 	db.First(&gathering, "id = ?", c.Param("id"))
 	if gathering.ID != 0 && gathering.Status == "completed" {
-		c.FileAttachment(gathering.ArchivePath, path.Base(gathering.ArchivePath))
+		c.FileAttachment(gathering.ArchivePath, gathering.ArchiveName)
 	} else {
 		c.String(404, "not found")
 	}

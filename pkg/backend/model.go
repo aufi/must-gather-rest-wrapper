@@ -14,6 +14,7 @@ type Gathering struct {
 	ID          uint      `gorm:"primarykey" json:"id"`
 	CreatedAt   time.Time `json:"created-at"`
 	UpdatedAt   time.Time `json:"updated-at"`
+	CustomName  string    `gorm:"uniqueIndex" form:"custom-name" json:"custom-name"`
 	Status      string    `json:"status"` // Expected values: new, inprogress, completed, error
 	Image       string    `form:"image" json:"image"`
 	ImageStream string    `form:"image-stream" json:"image-stream"`
@@ -22,7 +23,9 @@ type Gathering struct {
 	SourceDir   string    `form:"source-dir" json:"source-dir"`
 	Timeout     string    `form:"timeout" json:"timeout"`
 	Server      string    `form:"server" json:"server"`
-	ArchivePath string    `json:"-"`           // Not exposed via JSON API
+	ArchivePath string    `json:"-"` // Not exposed via JSON API
+	ArchiveSize uint      `json:"archive-size"`
+	ArchiveName string    `json:"archive-name"`
 	ExecOutput  string    `json:"exec-output"` // Fields without form:"<name>" cannot be set via API by bind
 }
 

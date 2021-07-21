@@ -1,16 +1,16 @@
 package backend
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 
 	"gorm.io/gorm"
 )
-
-var cmdExecCombinedOutput = cmdRealCombinedOutput
 
 func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	log.Printf("Starting Must-gather execution #%d", gathering.ID)
@@ -53,11 +53,21 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	if gathering.Command != "" {
 		args = append(args, "--", gathering.Command)
 	}
+	args = append(args, "2>&1") // Reading both stdout&stderr outputs to a single buffer
 	log.Printf("Must-gather execution #%d command args: %v", gathering.ID, args)
 	cmd.Args = args
 
-	// Execute the must-gather
-	output, err := cmdExecCombinedOutput(cmd) // cmd.CombinedOutput is wrapped in a method for better testing
+	// Execute the must-gather and capture output
+	stdout, _ := cmd.StdoutPipe()
+	cmd.Start()
+
+	lineStream := bufio.NewScanner(stdout)
+	for lineStream.Scan() {
+		gathering.ExecOutput = gathering.ExecOutput + "\n" + lineStream.Text()
+		db.Save(&gathering)
+	}
+
+	err = cmd.Wait()
 	if err != nil {
 		log.Printf("Error executing oc adm must-gather command: %v", err)
 		gathering.Status = "error"
@@ -72,19 +82,30 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 		gathering.Status = "error"
 	} else {
 		gathering.ArchivePath = strings.TrimSuffix(fmt.Sprintf("%s", gatheredArchivePath), "\n")
+		fileInfo, err := os.Stat(gathering.ArchivePath)
+		if err != nil {
+			log.Printf("Error checking must-gather result archive: %v", err)
+			gathering.Status = "error"
+		} else {
+			gathering.ArchiveSize = uint(fileInfo.Size())
+		}
+
 	}
 
 	// Store console output and archive
-	gathering.ExecOutput = fmt.Sprintf("%s", output)
 	if gathering.Status == "inprogress" {
+		// Determine user-friendly archive name
+		if gathering.CustomName != "" {
+			fnameParts := strings.SplitN(path.Base(gathering.ArchivePath), ".", 2) // Add CustomName before first dot in the archive filename
+			gathering.ArchiveName = fmt.Sprintf("%s-%s.%s", fnameParts[0], gathering.CustomName, fnameParts[1])
+		} else {
+			gathering.ArchiveName = path.Base(gathering.ArchivePath)
+		}
+
 		gathering.Status = "completed"
 	}
 	log.Printf("Must-gather execution #%d finished with status: %s", gathering.ID, gathering.Status)
 	db.Save(&gathering)
-}
-
-func cmdRealCombinedOutput(cmd *exec.Cmd) ([]byte, error) {
-	return cmd.CombinedOutput()
 }
 
 func gatheringDir(gatheringID uint) string {

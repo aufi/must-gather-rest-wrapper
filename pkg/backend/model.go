@@ -14,7 +14,7 @@ type Gathering struct {
 	ID          uint      `gorm:"primarykey" json:"id"`
 	CreatedAt   time.Time `json:"created-at"`
 	UpdatedAt   time.Time `json:"updated-at"`
-	CustomName  string    `gorm:"uniqueIndex" form:"custom-name" json:"custom-name"`
+	CustomName  string    `gorm:"index" form:"custom-name" json:"custom-name"`
 	Status      string    `json:"status"` // Expected values: new, inprogress, completed, error
 	Image       string    `form:"image" json:"image"`
 	ImageStream string    `form:"image-stream" json:"image-stream"`

@@ -70,7 +70,7 @@ func getGathering(c *gin.Context) {
 	if gathering.ID != 0 {
 		c.JSON(200, gathering)
 	} else {
-		db.Last(&gathering, "custom_name = ?", c.Param("id")) // Fallback to CustomName (string) lookup - based on custom name provided by client
+		db.Last(&gathering, "custom_name = ?", c.Param("id")) // Fallback to CustomName (string) lookup - returned the newest/last matching record
 		if gathering.ID != 0 {
 			c.JSON(200, gathering)
 		} else {

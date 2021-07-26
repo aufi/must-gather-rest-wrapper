@@ -21,7 +21,7 @@ $ go run pkg/must-gather-rest-wrapper.go # Note, run oc login first to allow wra
 Start must-gather execution
 
 ```
-$ curl -X POST -H "Content-Type: application/json" -d '{"image": "quay.io/maufart/forklift-must-gather", "timeout": "15m"}' http://localhost:8080/must-gather
+$ curl -X POST -H "Content-Type: application/json" -d '{"image": "quay.io/konveyor/forklift-must-gather", "timeout": "15m"}' http://localhost:8080/must-gather
 ```
 
 Get must-gather execution (status field values: new, inprogress, completed, error)
@@ -48,14 +48,16 @@ Example of must-gather JSON object returned by API
   "id": 15,
   "created-at": "2021-06-30T15:19:17.514594773+02:00",
   "updated-at": "2021-06-30T15:23:05.415732774+02:00",
+  "custom-name": "",
   "status": "completed",
-  "image": "quay.io/maufart/forklift-must-gather",
+  "image": "quay.io/konveyor/forklift-must-gather",
   "image-stream": "",
   "node-name": "",
   "command": "",
   "source-dir": "",
   "timeout": "30m",
   "server": "",
+  "archive-size": 95334,
   "exec-output": "[must-gather      ] OUT Using must-gather plug-in image: quay.io/maufart/forklift-must-gather\n[must-gather      ]..."
 }
 ```
@@ -73,6 +75,7 @@ command | custom command to be executed | ```PLAN=plan1 /usr/bin/targeted```
 timeout | timeout for must-gather execution | ```60m```
 source-dir | must-gather pod directory to take data from | ```/var/local/something```
 server | k8s API server which should be used | (taken from KUBECONFIG by default)
+custom-name | custom ID to query the must-gather execution without remembering its ID | ```forklift-plan1```
 
 All params are optional. Empty POST request will run must-gather with default options configured on server side (see below).
 

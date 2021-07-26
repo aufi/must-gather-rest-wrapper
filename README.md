@@ -33,7 +33,7 @@ $ curl  http://localhost:8080/must-gather/15
 Download must-gather archive (available only if must-gather execution status == "completed")
 
 ```
-$ curl http://localhost:8080/must-gather/15/data -o must-gather-archive.tar.gz
+$ curl -OJ http://localhost:8080/must-gather/15/data
 ```
 
 List all must-gather executions

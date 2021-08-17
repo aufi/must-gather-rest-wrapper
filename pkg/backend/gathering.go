@@ -53,6 +53,7 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	if gathering.Command != "" {
 		args = append(args, "--", gathering.Command)
 	}
+	//args = append(args, "2>&1") // Reading both stdout&stderr outputs to a single buffer
 	log.Printf("Must-gather execution #%d command args: %v", gathering.ID, args)
 	cmd.Args = args
 

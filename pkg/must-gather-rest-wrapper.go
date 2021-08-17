@@ -74,7 +74,8 @@ func getGathering(c *gin.Context) {
 		if gathering.ID != 0 {
 			c.JSON(200, gathering)
 		} else {
-			c.JSON(404, "not found")
+			// Return empty gathering with 404 code if not found
+			c.JSON(404, gathering)
 		}
 	}
 }
@@ -85,7 +86,7 @@ func getGatheringArchive(c *gin.Context) {
 	if gathering.ID != 0 && gathering.Status == "completed" {
 		c.FileAttachment(gathering.ArchivePath, gathering.ArchiveName)
 	} else {
-		c.String(404, "not found")
+		c.String(404, "")
 	}
 }
 

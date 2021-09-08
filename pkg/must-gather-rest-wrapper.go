@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/aufi/must-gather-rest-wrapper/pkg/backend"
 	"github.com/gin-gonic/gin"
@@ -49,6 +50,8 @@ func triggerGathering(c *gin.Context) {
 		if gathering.Timeout == "" {
 			gathering.Timeout = configEnvOrDefault("TIMEOUT", "20m") // default timeout for must-gather execution
 		}
+		gathering.AuthToken = strings.TrimPrefix(c.Request.Header.Get("Authorization"), "Bearer ")
+		// TODO: Check the token or just pass to the commandline? but always satinize to not explode token to multiple commands (steal previous executions data or tokens)
 		db.Create(&gathering)
 		c.JSON(201, gathering)
 		go backend.MustGatherExec(&gathering, db, configEnvOrDefault("ARCHIVE_FILENAME", "must-gather.tar.gz"))
@@ -58,6 +61,7 @@ func triggerGathering(c *gin.Context) {
 	}
 }
 
+// TODO filter results by authtoken
 func listGatherings(c *gin.Context) {
 	var Gatherings []backend.Gathering
 	db.Find(&Gatherings)

@@ -28,7 +28,7 @@ func MustGatherExec(gathering *Gathering, db *gorm.DB, archiveFilename string) {
 	cmd := exec.Command("oc")
 
 	// Minimal set of args
-	args := []string{"oc", "adm", "must-gather", "--dest-dir", dest_directory}
+	args := []string{"oc", "login", "--token", gathering.AuthToken, "&&", "oc", "adm", "must-gather", "--dest-dir", dest_directory}
 
 	// Expand args for given options (a shared function would need use reflection or marshaling which didn't look to be reasonable to me)
 	// ? args sanitized to not concat commands like image="quay.io/foo/bar; rm -rf something"

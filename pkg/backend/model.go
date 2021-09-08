@@ -14,6 +14,7 @@ type Gathering struct {
 	ID          uint      `gorm:"primarykey" json:"id"`
 	CreatedAt   time.Time `json:"created-at"`
 	UpdatedAt   time.Time `json:"updated-at"`
+	AuthToken   string    `json:"-"` // Maybe use hash function to not store the real token
 	CustomName  string    `gorm:"index" form:"custom-name" json:"custom-name"`
 	Status      string    `json:"status"` // Expected values: new, inprogress, completed, error
 	Image       string    `form:"image" json:"image"`

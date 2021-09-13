@@ -1,8 +1,10 @@
-# Must-gather REST wrapper
+# Must-gather REST wrapper was moved to https://github.com/konveyor/forklift-must-gather-api
+
+This repository is in-active and code might be outdated. Check the https://github.com/konveyor/forklift-must-gather-api for up-to-date code.
+
+## Outdated below
 
 The wraper should provide HTTP API to allow trigger OpenShift must-gather (full or targeted) and provide output archive again via HTTP.
-
-Under initial development, if this will work well, it could be moved under Forklift organization.
 
 ## Usage
 
